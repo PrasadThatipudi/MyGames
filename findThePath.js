@@ -1,16 +1,16 @@
-function createLineOfBoxes(length) {
-  let line = "";
+const BOX_SYMBOL = "🟦";
 
-  for (let index = 0; index < length; index++) {
-    line += "🟦";
+function createLineOfBoxes(length, boxSymbol) {
+  if (length === 0) {
+    return "";
   }
 
-  return line;
+  return boxSymbol + createLineOfBoxes(length - 1, boxSymbol);
 }
 
 function createBox(length, width) {
   for (let index = 0; index < width; index++) {
-    console.log(createLineOfBoxes(length));
+    console.log(createLineOfBoxes(length, BOX_SYMBOL));
   }
 }
 
