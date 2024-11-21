@@ -135,14 +135,14 @@ function getPath() {
   }
 }
 
-function isBomb(xPosition, yPosition, stepNo) {
+function isBomb(xPosition, yPosition, stepNo, path) {
   const xIndex = stepNo * 3;
   const yIndex = stepNo * 3 + 1;
 
-  return +PATH[xIndex] !== xPosition && +PATH[yIndex] !== yPosition;
+  return +path[xIndex] !== xPosition && +path[yIndex] !== yPosition;
 }
 
-function game(mineLength, mineWidth) {
+function game(mineLength, mineWidth, path) {
   let xPosition = mineLength;
   let yPosition = mineWidth;
   let stepNo = 0;
@@ -160,7 +160,7 @@ function game(mineLength, mineWidth) {
     yPosition = getYPosition(direction, yPosition, mineWidth);
     stepNo++;
 
-    if (isBomb(xPosition, yPosition, stepNo)) {
+    if (isBomb(xPosition, yPosition, stepNo, path)) {
       printMinefield(mineLength, mineWidth, xPosition, yPosition, true);
 
       xPosition = mineLength;
@@ -177,4 +177,4 @@ function game(mineLength, mineWidth) {
 const mineLength = 5;
 const mineWidth = 5;
 
-game(mineLength, mineWidth);
+game(mineLength, mineWidth, getPath());
