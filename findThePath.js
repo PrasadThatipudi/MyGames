@@ -125,13 +125,15 @@ function getDirectionFromUser() {
 }
 
 function getPath() {
-  const pathNo = Math.ceil(Math.random() * 2);
+  const pathNo = Math.ceil(Math.random() * 3);
 
   switch (pathNo) {
     case 1:
       return "55-45-44-34-33-32-22-21-11";
     case 2:
       return "55-54-53-43-33-32-31-21-11";
+    case 3:
+      return "55-54-53-52-51-41-42-43-33-23-13-12-11";
   }
 }
 
