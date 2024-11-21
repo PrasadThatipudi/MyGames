@@ -31,10 +31,24 @@ function getOffSet(direction, difference) {
   return (direction - difference) ** (direction - difference);
 }
 
+function isNumberInRange(min, max, number) {
+  return min <= number && number <= max;
+}
+
+function isXPositionExceeded(xPosition) {
+  return !isNumberInRange(1, mineLength, xPosition);
+}
+
+function isYPositionExceeded(yPosition) {
+  return !isNumberInRange(1, mineWidth, yPosition);
+}
+
 const RIGHT = 0;
 const LEFT = 1;
 const DOWN = 2;
 const UP = 3;
+
+const PATH = ""
 
 function game(mineLength, mineWidth) {
   let xPosition = mineLength;
@@ -42,21 +56,36 @@ function game(mineLength, mineWidth) {
 
   while (!(xPosition === 1 && yPosition === 1)) {
     console.clear();
+    console.log(xPosition, yPosition);
     console.log(getMineField(mineLength, mineWidth, xPosition, yPosition));
     
     const direction = +prompt("Enter the direction: ", "0");
     
     if (direction === LEFT || direction === RIGHT) {
-      xPosition = xPosition + getOffSet(direction, 1);
+      let offSetX = getOffSet(direction, 1);
+      
+      if (isXPositionExceeded(xPosition + offSetX)) {
+        offSetX = 0;
+      }
+
+      xPosition += offSetX;
     }
     
     if (direction === UP || direction === DOWN) {
-      yPosition = yPosition + getOffSet(direction, 3);
+      let offSetY = getOffSet(direction, 3);
+
+      if (isYPositionExceeded(yPosition + offSetY)) {
+        offSetY = 0;
+      }
+
+      yPosition += offSetY;
     }
   }
   
   console.clear();
+  console.log(xPosition, yPosition);
   console.log(getMineField(mineLength, mineWidth, xPosition, yPosition));
+  console.log("Congratulations! You won the game!");
 }
 
 const mineLength = 5;
