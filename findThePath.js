@@ -124,7 +124,16 @@ function getDirectionFromUser() {
   }
 }
 
-const PATH = "55-45-44-34-33-32-22-21-11";
+function getPath() {
+  const pathNo = Math.ceil(Math.random() * 2);
+
+  switch (pathNo) {
+    case 1:
+      return "55-45-44-34-33-32-22-21-11";
+    case 2:
+      return "55-54-53-43-33-32-31-21-11";
+  }
+}
 
 function isBomb(xPosition, yPosition, stepNo) {
   const xIndex = stepNo * 3;
