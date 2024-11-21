@@ -113,6 +113,13 @@ function getDirectionFromUser() {
 
 const PATH = "55-45-44-34-33-32-22-21-11";
 
+function isBomb(xPosition, yPosition, stepNo) {
+  const xIndex = stepNo * 3;
+  const yIndex = stepNo * 3 + 1;
+
+  return (+PATH[xIndex] === xPosition && +PATH[yIndex] === yPosition);
+}
+
 function game(mineLength, mineWidth) {
   let xPosition = mineLength;
   let yPosition = mineWidth;
