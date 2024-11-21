@@ -36,13 +36,13 @@ const LEFT = 1;
 const DOWN = 2;
 const UP = 3;
 
-function game(mineLength) {
+function game(mineLength, mineWidth) {
   let xPosition = mineLength;
-  let yPosition = mineLength;
+  let yPosition = mineWidth;
 
   while (true) {
     console.clear();
-    console.log(getMineField(mineLength, mineLength, xPosition, yPosition));
+    console.log(getMineField(mineLength, mineWidth, xPosition, yPosition));
 
     const direction = +prompt("Enter the direction: ", "0");
 
@@ -53,26 +53,10 @@ function game(mineLength) {
     if (direction === UP || direction === DOWN) {
       yPosition = yPosition + getOffSet(direction, 3);
     }
-
-    // switch (direction) {
-    //   case RIGHT:
-    //     xPosition = xPosition - 1;
-    //     break;
-    //   case LEFT:
-    //     xPosition = xPosition + 1;
-    //     break;
-    //   case DOWN:
-    //     yPosition = yPosition - 1;
-    //     break;
-    //   case UP:
-    //     yPosition = yPosition + 1;
-    //     break;
-    //   default:
-    //     console.log("Invalid input");
-    // }
   }
 }
 
 const mineLength = 5;
+const mineWidth = 5;
 
 game(mineLength);
