@@ -1,30 +1,33 @@
 const BOX_SYMBOL = "🟦";
 const PLAYER = "🧔‍♂️";
+const BOMB = "💣";
 
-function createLineOfBoxes(length, playerPosition) {
+function createLineOfBoxes(length, playerPosition, isBomb) {
   if (length === 0) {
     return "";
   }
 
   if (length === playerPosition) {
-    return PLAYER + createLineOfBoxes(length - 1, playerPosition);
+    const symbol = isBomb ? BOMB : PLAYER;
+
+    return symbol + createLineOfBoxes(length - 1, playerPosition, isBomb);
   }
 
-  return BOX_SYMBOL + createLineOfBoxes(length - 1, playerPosition);
+  return BOX_SYMBOL + createLineOfBoxes(length - 1, playerPosition, isBomb);
 }
 
-function getMineField(length, width, xPosition, yPosition) {
+function getMineField(length, width, xPosition, yPosition, isBomb) {
   if (width === 0) {
     return "";
   }
 
   if (width === yPosition) {
-    return createLineOfBoxes(length, xPosition) + "\n" +
-      getMineField(length, width - 1, xPosition, yPosition);
+    return createLineOfBoxes(length, xPosition, isBomb) + "\n" +
+      getMineField(length, width - 1, xPosition, yPosition, isBomb);
   }
 
-  return createLineOfBoxes(length, 0) + "\n" + 
-    getMineField(length, width - 1, xPosition, yPosition);
+  return createLineOfBoxes(length, 0, isBomb) + "\n" + 
+    getMineField(length, width - 1, xPosition, yPosition, isBomb);
 }
 
 function getOffSet(direction, difference) {
@@ -39,10 +42,18 @@ function isPositionExceeded(min, max, position) {
   return !isNumberInRange(min, max, position);
 }
 
-function printMinefield(mineLength, mineWidth, xPosition, yPosition) {
+function delay() {
+  for (let index = 0; index < 900000000; index++) {}
+}
+
+function printMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb) {
   console.clear();
-  console.log(xPosition, yPosition);  
-  console.log(getMineField(mineLength, mineWidth, xPosition, yPosition));
+  console.log(xPosition, yPosition);
+  console.log(getMineField(mineLength, mineWidth, xPosition, yPosition, isBomb));
+
+  if (isBomb) {
+    delay();
+  }
 }
 
 const RIGHT = 0;
@@ -108,6 +119,8 @@ function getDirectionFromUser() {
       return UP;
     case "s":
       return DOWN;
+    default:
+      return "Invalid";
   }
 }
 
@@ -117,28 +130,42 @@ function isBomb(xPosition, yPosition, stepNo) {
   const xIndex = stepNo * 3;
   const yIndex = stepNo * 3 + 1;
 
-  return (+PATH[xIndex] === xPosition && +PATH[yIndex] === yPosition);
+  return +PATH[xIndex] !== xPosition && +PATH[yIndex] !== yPosition;
 }
 
 function game(mineLength, mineWidth) {
   let xPosition = mineLength;
   let yPosition = mineWidth;
+  let stepNo = 0;
 
   while (!isPlayerReachedTheEnd(xPosition, yPosition)) {
-    printMinefield(mineLength, mineWidth, xPosition, yPosition);
+    printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
     
     const direction = getDirectionFromUser();
+
+    if (direction === "Invalid") {
+      continue;
+    }
     
     xPosition = getXPosition(direction, xPosition, mineLength);
     yPosition = getYPosition(direction, yPosition, mineWidth);
+    stepNo++;
+
+    if (isBomb(xPosition, yPosition, stepNo)) {
+      printMinefield(mineLength, mineWidth, xPosition, yPosition, true);
+
+      xPosition = mineLength;
+      yPosition = mineWidth;
+      stepNo = 0;
+    }
   }
 
-  printMinefield(mineLength, mineWidth, xPosition, yPosition);
+  printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
   
   console.log("Congratulations! You reached the destination!");
 }
 
 const mineLength = 5;
-const mineWidth = 6;
+const mineWidth = 5;
 
 game(mineLength, mineWidth);
