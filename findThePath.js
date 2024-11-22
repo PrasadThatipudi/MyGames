@@ -221,6 +221,5 @@ const mineLength = 5;
 const mineWidth = 6;
 const xInitial = 1;
 const yInitial = 1;
-// console.log("hi");
+
 game(mineLength, mineWidth, getPath(), xInitial, yInitial);
-// console.log("hello!");
