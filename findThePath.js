@@ -71,7 +71,7 @@ function isPositionExceeded(min, max, position) {
   return !isNumberInRange(position, min, max);
 }
 
-function delay(delaySpeed) {
+function wait(delaySpeed) {
   for (let index = 0; index < delaySpeed; index++) { }
 }
 
@@ -136,7 +136,7 @@ function printInstructions() {
 }
 
 function readDirection() {
-  printInstructions();
+  // printInstructions();
 
   const direction = prompt("Enter the direction: ");
 
@@ -150,7 +150,7 @@ function readDirection() {
     case "s":
       return DOWN;
     default:
-      return "Invalid";
+      return readDirection();
   }
 }
 
@@ -184,14 +184,8 @@ function getPlayerIndex(length, width, xPosition, yPosition) {
   return (((length + 1) * (width - yPosition)) + (length - xPosition)) * 2;
 }
 
-function updateMinefield(mineLength, mineWidth, xPosition, yPosition) {
-  const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition,
-    yPosition);
-
-  let minefield = createMinefield(mineLength, mineWidth);
-  minefield = put(minefield, PLAYER, playerIndex);
-
-  return minefield;
+function printMinefield(minefield) {
+  console.log(minefield);
 }
 
 function game(mineLength, mineWidth, path, xInitial, yInitial) {
@@ -199,12 +193,12 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
   let yPosition = yInitial;
   let stepNo = 0;
 
-  let minefield = "";
+  const minefield = createMinefield(mineLength, mineWidth);
 
   while (!isGameOver()) {
-    minefield = updateMinefield(mineLength, mineWidth, xPosition, yPosition);
+    const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition, yPosition);
 
-    console.log(minefield);
+    printMinefield(put(minefield, PLAYER, playerIndex));
 
     const direction = readDirection();
 
@@ -214,6 +208,16 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
 
     xPosition = getXPosition(direction, xPosition, mineLength + 1);
     yPosition = getYPosition(direction, yPosition, mineWidth + 1);
+    stepNo++;
+
+
+    if (isBomb(xPosition, yPosition, stepNo, path)) {
+      printMinefield(put(minefield, BOMB, playerIndex));
+
+      xPosition = xInitial;
+      yPosition = yInitial;
+      stepNo = 0;
+    }
   }
 }
 
