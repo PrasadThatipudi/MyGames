@@ -139,33 +139,36 @@ function getPath() {
 
   switch (pathNo) {
     case 1:
-      return "11-21-22-32-33-34-44-45-55";
+      return "11-12-22-23-24-34-44-45-55-56";
       // return "55-45-44-34-33-32-22-21-11";
     case 2:
-      return "11-21-31-32-33-43-53-54-55";
+      return "11-12-22-32-33-34-44-54-55-56";
       // return "55-54-53-43-33-32-31-21-11";
     case 3:
-      return "11-12-13-23-33-43-42-41-51-52-53-54-55";
+      return "11-12-13-14-24-34-44-43-42-52-53-54-55-56";
       // return "55-54-53-52-51-41-42-43-33-23-13-12-11";
   }
 }
 
 function isBomb(xPosition, yPosition, stepNo, path) {
+  if (yPosition === 1) {
+    return false;
+  }
   const xIndex = stepNo * 3;
   const yIndex = stepNo * 3 + 1;
 
-  console.log("x:" + xIndex + " y:" + yIndex);
-  console.log("path[xIndex]:" + +path[xIndex]);
-  console.log("path[yIndex]:" + +path[yIndex]);
-  console.log("xPosition:" + xPosition);
-  console.log("yPosition:" + yPosition);
+  // console.log("x:" + xIndex + " y:" + yIndex);
+  // console.log("path[xIndex]:" + +path[xIndex]);
+  // console.log("path[yIndex]:" + +path[yIndex]);
+  // console.log("xPosition:" + xPosition);
+  // console.log("yPosition:" + yPosition);
 
   return !(+path[xIndex] === xPosition && +path[yIndex] === yPosition);
 }
 
-function game(mineLength, mineWidth, path) {
-  let xPosition = 1;
-  let yPosition = 1;
+function game(mineLength, mineWidth, path, xInitial, yInitial) {
+  let xPosition = xInitial;
+  let yPosition = yInitial;
   let stepNo = 0;
 
   while (!isPlayerReachedTheEnd(xPosition, yPosition, path)) {
@@ -184,8 +187,8 @@ function game(mineLength, mineWidth, path) {
     if (isBomb(xPosition, yPosition, stepNo, path)) {
       printMinefield(mineLength, mineWidth, xPosition, yPosition, true);
 
-      xPosition = 1;
-      yPosition = 1;
+      xPosition = xInitial;
+      yPosition = yInitial;
       stepNo = 0;
     }
   }
@@ -196,7 +199,6 @@ function game(mineLength, mineWidth, path) {
 }
 
 const mineLength = 5;
-const mineWidth = 5;
-// const noBombArea = ""
+const mineWidth = 6;
 
-game(mineLength, mineWidth, getPath());
+game(mineLength, mineWidth, getPath(), 1, 1);
