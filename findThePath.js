@@ -2,7 +2,7 @@ const BOX_SYMBOL = "🟦";
 const PLAYER = "🧔‍♂️";
 const BOMB = "💣";
 
-function createLineOfBoxes(length, playerPosition, isBomb) {
+function createLineOfBoxes(length, playerPosition, isBomb, boxSymbol) {
   if (length === 0) {
     return "";
   }
@@ -10,10 +10,10 @@ function createLineOfBoxes(length, playerPosition, isBomb) {
   if (length === playerPosition) {
     const symbol = isBomb ? BOMB : PLAYER;
 
-    return symbol + createLineOfBoxes(length - 1, playerPosition, isBomb);
+    return symbol + createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol);
   }
 
-  return BOX_SYMBOL + createLineOfBoxes(length - 1, playerPosition, isBomb);
+  return boxSymbol + createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol);
 }
 
 function getMineField(length, width, xPosition, yPosition, isBomb) {
@@ -21,12 +21,19 @@ function getMineField(length, width, xPosition, yPosition, isBomb) {
     return "";
   }
 
+  if (width === 1) {
+    const xPos = width === yPosition ? xPosition : 0;
+
+    return createLineOfBoxes(length, xPos, isBomb, "  ") + "\n" +
+    getMineField(length, width - 1, xPosition, yPosition, isBomb);
+  }
+
   if (width === yPosition) {
-    return createLineOfBoxes(length, xPosition, isBomb) + "\n" +
+    return createLineOfBoxes(length, xPosition, isBomb, BOX_SYMBOL) + "\n" +
       getMineField(length, width - 1, xPosition, yPosition, isBomb);
   }
 
-  return createLineOfBoxes(length, 0, isBomb) + "\n" + 
+  return createLineOfBoxes(length, 0, isBomb, BOX_SYMBOL) + "\n" + 
     getMineField(length, width - 1, xPosition, yPosition, isBomb);
 }
 
@@ -103,8 +110,11 @@ function getYPosition(direction, yPosition, maxOfY) {
   return getDesiredPosition(direction, yPosition, maxOfY, 3);
 }
 
-function isPlayerReachedTheEnd(xPosition, yPosition) {
-  return xPosition === 1 && yPosition === 1;
+function isPlayerReachedTheEnd(xPosition, yPosition, path) {
+  const xEndPosition = +path[path.length - 2];
+  const yEndPosition = +path[path.length - 1];
+
+  return xPosition === xEndPosition && yPosition === yEndPosition;
 }
 
 function getDirectionFromUser() {
@@ -129,11 +139,14 @@ function getPath() {
 
   switch (pathNo) {
     case 1:
-      return "55-45-44-34-33-32-22-21-11";
+      return "11-21-22-32-33-34-44-45-55";
+      // return "55-45-44-34-33-32-22-21-11";
     case 2:
-      return "55-54-53-43-33-32-31-21-11";
+      return "11-21-31-32-33-43-53-54-55";
+      // return "55-54-53-43-33-32-31-21-11";
     case 3:
-      return "55-54-53-52-51-41-42-43-33-23-13-12-11";
+      return "11-12-13-23-33-43-42-41-51-52-53-54-55";
+      // return "55-54-53-52-51-41-42-43-33-23-13-12-11";
   }
 }
 
@@ -141,15 +154,21 @@ function isBomb(xPosition, yPosition, stepNo, path) {
   const xIndex = stepNo * 3;
   const yIndex = stepNo * 3 + 1;
 
-  return +path[xIndex] !== xPosition && +path[yIndex] !== yPosition;
+  console.log("x:" + xIndex + " y:" + yIndex);
+  console.log("path[xIndex]:" + +path[xIndex]);
+  console.log("path[yIndex]:" + +path[yIndex]);
+  console.log("xPosition:" + xPosition);
+  console.log("yPosition:" + yPosition);
+
+  return !(+path[xIndex] === xPosition && +path[yIndex] === yPosition);
 }
 
 function game(mineLength, mineWidth, path) {
-  let xPosition = mineLength;
-  let yPosition = mineWidth;
+  let xPosition = 1;
+  let yPosition = 1;
   let stepNo = 0;
 
-  while (!isPlayerReachedTheEnd(xPosition, yPosition)) {
+  while (!isPlayerReachedTheEnd(xPosition, yPosition, path)) {
     printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
     
     const direction = getDirectionFromUser();
@@ -165,8 +184,8 @@ function game(mineLength, mineWidth, path) {
     if (isBomb(xPosition, yPosition, stepNo, path)) {
       printMinefield(mineLength, mineWidth, xPosition, yPosition, true);
 
-      xPosition = mineLength;
-      yPosition = mineWidth;
+      xPosition = 1;
+      yPosition = 1;
       stepNo = 0;
     }
   }
@@ -178,5 +197,6 @@ function game(mineLength, mineWidth, path) {
 
 const mineLength = 5;
 const mineWidth = 5;
+// const noBombArea = ""
 
 game(mineLength, mineWidth, getPath());
