@@ -1,22 +1,25 @@
 const BOX_SYMBOL = "🟦";
 const PLAYER = "🧔‍♂️";
 const BOMB = "💣";
+const BOMB_EXPLOSION = "💥";
 
-function createLineOfBoxes(length, playerPosition, isBomb, boxSymbol) {
+function createLineOfBoxes(length, playerPosition, isBomb, boxSymbol, bomb) {
   if (length === 0) {
     return "";
   }
 
   if (length === playerPosition) {
-    const symbol = isBomb ? BOMB : PLAYER;
+    const symbol = isBomb ? bomb : PLAYER;
 
-    return symbol + createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol);
+    return symbol + 
+      createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol, bomb);
   }
 
-  return boxSymbol + createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol);
+  return boxSymbol + 
+    createLineOfBoxes(length - 1, playerPosition, isBomb, boxSymbol, bomb);
 }
 
-function getMineField(length, width, xPosition, yPosition, isBomb) {
+function getMineField(length, width, xPosition, yPosition, isBomb, bomb) {
   if (width === 0) {
     return "";
   }
@@ -24,17 +27,18 @@ function getMineField(length, width, xPosition, yPosition, isBomb) {
   if (width === 1) {
     const xPos = width === yPosition ? xPosition : 0;
 
-    return createLineOfBoxes(length, xPos, isBomb, "  ") + "\n" +
-    getMineField(length, width - 1, xPosition, yPosition, isBomb);
+    return createLineOfBoxes(length, xPos, isBomb, "  ", bomb) + "\n" +
+    getMineField(length, width - 1, xPosition, yPosition, isBomb, bomb);
   }
 
   if (width === yPosition) {
-    return createLineOfBoxes(length, xPosition, isBomb, BOX_SYMBOL) + "\n" +
-      getMineField(length, width - 1, xPosition, yPosition, isBomb);
+    return createLineOfBoxes(length, xPosition, isBomb, BOX_SYMBOL, bomb)
+      + "\n" + 
+      getMineField(length, width - 1, xPosition, yPosition, isBomb, bomb);
   }
 
-  return createLineOfBoxes(length, 0, isBomb, BOX_SYMBOL) + "\n" + 
-    getMineField(length, width - 1, xPosition, yPosition, isBomb);
+  return createLineOfBoxes(length, 0, isBomb, BOX_SYMBOL, bomb) + "\n" + 
+    getMineField(length, width - 1, xPosition, yPosition, isBomb, bomb);
 }
 
 function getOffSet(direction, difference) {
@@ -49,18 +53,15 @@ function isPositionExceeded(min, max, position) {
   return !isNumberInRange(min, max, position);
 }
 
-function delay() {
-  for (let index = 0; index < 900000000; index++) {}
+function delay(delaySpeed) {
+  for (let index = 0; index < delaySpeed; index++) {}
 }
 
-function printMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb) {
+function printMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb, bomb) {
   console.clear();
   console.log(xPosition, yPosition);
-  console.log(getMineField(mineLength, mineWidth, xPosition, yPosition, isBomb));
 
-  if (isBomb) {
-    delay();
-  }
+  console.log(getMineField(mineLength, mineWidth, xPosition, yPosition, isBomb, bomb));
 }
 
 const RIGHT = 0;
@@ -117,7 +118,14 @@ function isPlayerReachedTheEnd(xPosition, yPosition, path) {
   return xPosition === xEndPosition && yPosition === yEndPosition;
 }
 
+function printInstructions() {
+  console.log("  w     🔼");
+  console.log("a s d ◀️ 🔽▶️");
+}
+
 function getDirectionFromUser() {
+  printInstructions();
+
   const direction = prompt("Enter the direction: ");
 
   switch (direction) {
@@ -166,6 +174,20 @@ function isBomb(xPosition, yPosition, stepNo, path) {
   return !(+path[xIndex] === xPosition && +path[yIndex] === yPosition);
 }
 
+// function createMinefield(mineLength, mineWidth, xPosition, yPosition) {
+//   let minefield = "";
+
+//   for (let column = 0; column < mineWidth; column++) {
+//     for (let row = 0; row < mineLength; row++) {
+//       minefield += BOX_SYMBOL;
+//     }
+    
+//     minefield += "\n";
+//   }
+
+//   return minefield;
+// }
+
 function game(mineLength, mineWidth, path, xInitial, yInitial) {
   let xPosition = xInitial;
   let yPosition = yInitial;
@@ -182,10 +204,18 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
     
     xPosition = getXPosition(direction, xPosition, mineLength);
     yPosition = getYPosition(direction, yPosition, mineWidth);
-    stepNo++;
+
+    if (yPosition !== yInitial) {
+      stepNo++;
+    }
 
     if (isBomb(xPosition, yPosition, stepNo, path)) {
-      printMinefield(mineLength, mineWidth, xPosition, yPosition, true);
+      printMinefield(mineLength, mineWidth, xPosition, yPosition, true, BOMB);
+      delay(900000000);
+      
+      printMinefield(mineLength, mineWidth, xPosition, yPosition, true,
+        BOMB_EXPLOSION);
+      delay(900000000);
 
       xPosition = xInitial;
       yPosition = yInitial;
@@ -200,5 +230,7 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
 
 const mineLength = 5;
 const mineWidth = 6;
+const xInitial = 1;
+const yInitial = 1;
 
-game(mineLength, mineWidth, getPath(), 1, 1);
+game(mineLength, mineWidth, getPath(), xInitial, yInitial);
