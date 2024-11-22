@@ -3,16 +3,55 @@ const PLAYER = "🧔‍♂️";
 const BOMB = "💣";
 const BOMB_EXPLOSION = "💥";
 
-function createLineOfBoxes(length, playerPosition) {
-  if (length === 0) {
+function repeat(string, noOfRepetitions) {
+  if (noOfRepetitions < 1) {
     return "";
   }
 
-  if (length === playerPosition) {
-    return PLAYER + createLineOfBoxes(length - 1, playerPosition);
+  return string + repeat(string, noOfRepetitions - 1);
+}
+
+function isNumberInRange(number, min, max) {
+  return min <= number && number < max;
+}
+
+function getSlice(text, start, end) {
+  if (start >= end + 1) {
+    return "";
   }
 
-  return BOX_SYMBOL + createLineOfBoxes(length - 1, playerPosition);
+  return text[start] + getSlice(text, start + 1, end);
+}
+
+function min(num1, num2) {
+  return num1 < num2 ? num1 : num2;
+}
+
+function max(num1, num2) {
+  return num1 > num2 ? num1 : num2;
+}
+
+function slice(text, start, end) {
+  return getSlice(text, max(start, 0), min(end, text.length - 1));
+}
+
+function put(text, otherString, index) {
+  if (!isNumberInRange(index, 0, text.length)) {
+    return text;
+  }
+
+  const firstPart = slice(text, 0, index - 1);
+  const lastPart = slice(text, index + otherString.length, text.length - 1);
+
+  return firstPart + otherString + lastPart;
+}
+
+function createLineOfBoxes(length, xPosition, box, player) {
+  if (xPosition !== 0) {
+    return put(repeat(box, length), player, length - xPosition);
+  }
+
+  return repeat(box, length);
 }
 
 function createMinefield(mineLength, mineWidth, xPosition, yPosition) {
@@ -23,17 +62,17 @@ function createMinefield(mineLength, mineWidth, xPosition, yPosition) {
   if (mineWidth === 1) {
     const xPos = mineWidth === yPosition ? xPosition : 0;
 
-    return createLineOfBoxes(mineLength, xPos, isBomb, "  ", bomb) + "\n" +
-    createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
-  }
-
-  if (mineWidth === yPosition) {
-    return createLineOfBoxes(mineLength, xPosition, isBomb, BOX_SYMBOL, bomb)
-      + "\n" + 
+    return createLineOfBoxes(mineLength, xPos, "  ", PLAYER) + "\n" +
       createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
   }
 
-  return createLineOfBoxes(mineLength, 0, isBomb, BOX_SYMBOL, bomb) + "\n" + 
+  if (mineWidth === yPosition) {
+    return createLineOfBoxes(mineLength, xPosition, BOX_SYMBOL, PLAYER)
+      + "\n" +
+      createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
+  }
+
+  return createLineOfBoxes(mineLength, 0, BOX_SYMBOL, PLAYER) + "\n" +
     createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
 }
 
@@ -41,16 +80,12 @@ function getOffSet(direction, difference) {
   return (direction - difference) ** (direction - difference);
 }
 
-function isNumberInRange(min, max, number) {
-  return min <= number && number <= max;
-}
-
 function isPositionExceeded(min, max, position) {
-  return !isNumberInRange(min, max, position);
+  return !isNumberInRange(position, min, max);
 }
 
 function delay(delaySpeed) {
-  for (let index = 0; index < delaySpeed; index++) {}
+  for (let index = 0; index < delaySpeed; index++) { }
 }
 
 function printMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb, bomb) {
@@ -144,13 +179,13 @@ function getPath() {
   switch (pathNo) {
     case 1:
       return "11-12-22-23-24-34-44-45-55-56";
-      // return "55-45-44-34-33-32-22-21-11";
+    // return "55-45-44-34-33-32-22-21-11";
     case 2:
       return "11-12-22-32-33-34-44-54-55-56";
-      // return "55-54-53-43-33-32-31-21-11";
+    // return "55-54-53-43-33-32-31-21-11";
     case 3:
       return "11-12-13-14-24-34-44-43-42-52-53-54-55-56";
-      // return "55-54-53-52-51-41-42-43-33-23-13-12-11";
+    // return "55-54-53-52-51-41-42-43-33-23-13-12-11";
   }
 }
 
@@ -175,38 +210,45 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
   let yPosition = yInitial;
   let stepNo = 0;
 
+  const minefield = createMinefield(mineLength, mineWidth, xPosition,
+    yPosition);
+
   while (!isPlayerReachedTheEnd(xPosition, yPosition, path)) {
-    printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
-    
+    // printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
+
+    console.log(minefield);
+
     const direction = getDirectionFromUser();
 
     if (direction === "Invalid") {
       continue;
     }
-    
+
     xPosition = getXPosition(direction, xPosition, mineLength);
     yPosition = getYPosition(direction, yPosition, mineWidth);
 
-    if (yPosition !== yInitial) {
-      stepNo++;
-    }
+    console.log(xPosition, yPosition);
 
-    if (isBomb(xPosition, yPosition, stepNo, path)) {
-      printMinefield(mineLength, mineWidth, xPosition, yPosition, true, BOMB);
-      delay(900000000);
-      
-      printMinefield(mineLength, mineWidth, xPosition, yPosition, true,
-        BOMB_EXPLOSION);
-      delay(900000000);
+    // if (yPosition !== yInitial) {
+    //   stepNo++;
+    // }
 
-      xPosition = xInitial;
-      yPosition = yInitial;
-      stepNo = 0;
-    }
+    // if (isBomb(xPosition, yPosition, stepNo, path)) {
+    //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true, BOMB);
+    //   delay(900000000);
+
+    //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true,
+    //     BOMB_EXPLOSION);
+    //   delay(900000000);
+
+    //   xPosition = xInitial;
+    //   yPosition = yInitial;
+    //   stepNo = 0;
+    // }
   }
 
   printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
-  
+
   console.log("Congratulations! You reached the destination!");
 }
 
