@@ -186,6 +186,7 @@ function getPlayerIndex(length, width, xPosition, yPosition) {
 
 function printMinefield(minefield) {
   console.log(minefield);
+  printInstructions();
 }
 
 function game(mineLength, mineWidth, path, xInitial, yInitial) {
@@ -201,10 +202,6 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
     printMinefield(put(minefield, PLAYER, playerIndex));
 
     const direction = readDirection();
-
-    if (direction === "Invalid") {
-      continue;
-    }
 
     xPosition = getXPosition(direction, xPosition, mineLength + 1);
     yPosition = getYPosition(direction, yPosition, mineWidth + 1);
