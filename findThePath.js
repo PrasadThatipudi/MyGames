@@ -1,5 +1,5 @@
 const BOX_SYMBOL = "🟦";
-const PLAYER = "🧔‍♂️";
+const PLAYER = "P";
 const BOMB = "💣";
 const BOMB_EXPLOSION = "💥";
 
@@ -54,26 +54,13 @@ function createLineOfBoxes(length, xPosition, box, player) {
   return repeat(box, length);
 }
 
-function createMinefield(mineLength, mineWidth, xPosition, yPosition) {
-  if (mineWidth === 0) {
-    return "";
-  }
+function createMinefield(mineLength, mineWidth) {
+  const line = createLineOfBoxes(mineLength, 0, BOX_SYMBOL, PLAYER) + "\n";
 
-  if (mineWidth === 1) {
-    const xPos = mineWidth === yPosition ? xPosition : 0;
+  const minefield = repeat(line, mineWidth - 1);
+  const noMineArea = repeat("  ", mineLength);
 
-    return createLineOfBoxes(mineLength, xPos, "  ", PLAYER) + "\n" +
-      createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
-  }
-
-  if (mineWidth === yPosition) {
-    return createLineOfBoxes(mineLength, xPosition, BOX_SYMBOL, PLAYER)
-      + "\n" +
-      createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
-  }
-
-  return createLineOfBoxes(mineLength, 0, BOX_SYMBOL, PLAYER) + "\n" +
-    createMinefield(mineLength, mineWidth - 1, xPosition, yPosition);
+  return minefield + noMineArea;
 }
 
 function getOffSet(direction, difference) {
@@ -92,7 +79,7 @@ function printMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb, bom
   console.clear();
   console.log(xPosition, yPosition);
 
-  console.log(createMinefield(mineLength, mineWidth, xPosition, yPosition, isBomb, bomb));
+  // console.log(createMinefield(mineLength, mineWidth));
 }
 
 const RIGHT = 0;
@@ -142,7 +129,7 @@ function getYPosition(direction, yPosition, maxOfY) {
   return getDesiredPosition(direction, yPosition, maxOfY, 3);
 }
 
-function isPlayerReachedTheEnd(xPosition, yPosition, path) {
+function isGameOver(xPosition, yPosition, path) {
   const xEndPosition = +path[path.length - 2];
   const yEndPosition = +path[path.length - 1];
 
@@ -210,46 +197,45 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
   let yPosition = yInitial;
   let stepNo = 0;
 
-  const minefield = createMinefield(mineLength, mineWidth, xPosition,
-    yPosition);
+  const minefield = createMinefield(mineLength, mineWidth);
 
-  while (!isPlayerReachedTheEnd(xPosition, yPosition, path)) {
-    // printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
+  // while (!isGameOver(xPosition, yPosition, path)) {
+  //   // printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
 
-    console.log(minefield);
+  //   console.log(minefield);
 
-    const direction = getDirectionFromUser();
+  //   const direction = getDirectionFromUser();
 
-    if (direction === "Invalid") {
-      continue;
-    }
+  //   if (direction === "Invalid") {
+  //     continue;
+  //   }
 
-    xPosition = getXPosition(direction, xPosition, mineLength);
-    yPosition = getYPosition(direction, yPosition, mineWidth);
+  //   xPosition = getXPosition(direction, xPosition, mineLength);
+  //   yPosition = getYPosition(direction, yPosition, mineWidth);
 
-    console.log(xPosition, yPosition);
+  //   console.log(xPosition, yPosition);
 
-    // if (yPosition !== yInitial) {
-    //   stepNo++;
-    // }
+  // if (yPosition !== yInitial) {
+  //   stepNo++;
+  // }
 
-    // if (isBomb(xPosition, yPosition, stepNo, path)) {
-    //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true, BOMB);
-    //   delay(900000000);
+  // if (isBomb(xPosition, yPosition, stepNo, path)) {
+  //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true, BOMB);
+  //   delay(900000000);
 
-    //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true,
-    //     BOMB_EXPLOSION);
-    //   delay(900000000);
+  //   printMinefield(mineLength, mineWidth, xPosition, yPosition, true,
+  //     BOMB_EXPLOSION);
+  //   delay(900000000);
 
-    //   xPosition = xInitial;
-    //   yPosition = yInitial;
-    //   stepNo = 0;
-    // }
-  }
+  //   xPosition = xInitial;
+  //   yPosition = yInitial;
+  //   stepNo = 0;
+  // }
+}
 
-  printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
+printMinefield(mineLength, mineWidth, xPosition, yPosition, false);
 
-  console.log("Congratulations! You reached the destination!");
+console.log("Congratulations! You reached the destination!");
 }
 
 const mineLength = 5;
