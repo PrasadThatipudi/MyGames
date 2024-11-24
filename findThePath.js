@@ -60,10 +60,6 @@ function isPositionExceeded(min, max, position) {
   return !isNumberInRange(position, min, max);
 }
 
-function wait(delaySpeed) {
-  for (let index = 0; index < delaySpeed; index++) { }
-}
-
 const RIGHT = 0;
 const LEFT = 1;
 const DOWN = 2;
@@ -177,6 +173,35 @@ function printMinefield(minefield, symbol, index) {
   printInstructions();
 }
 
+function getMinefieldWithPath(path, minefield, mineLength, mineWidth, box,
+  player) {
+
+  let minefieldWithPath = minefield;
+  let index = 3;
+
+  while (index < path.length - 3) {
+    const xPos = +path[index];
+    const yPos = +path[index + 1];
+
+    index += 3;
+    const stepIndex = getPlayerIndex(mineLength, mineWidth, xPos, yPos);
+
+    minefieldWithPath = put(minefieldWithPath, box, stepIndex);
+  }
+
+  const xPos = +path[index];
+  const yPos = +path[index + 1];
+
+  const stepIndex = getPlayerIndex(mineLength, mineWidth, xPos, yPos);
+
+  return put(minefieldWithPath, player, stepIndex);
+}
+
+
+function wait(delaySpeed) {
+  for (let index = 0; index < delaySpeed; index++) { }
+}
+
 function game(mineLength, mineWidth, path, xInitial, yInitial) {
   const BOX = "🟦";
   const PLAYER = "🧔";
@@ -186,13 +211,14 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
   let xPosition = xInitial;
   let yPosition = yInitial;
   let stepNo = 0;
+  let isPlayerEnteredIntoMine = false;
 
   const minefield = createMinefield(mineLength, mineWidth, BOX);
-  console.log(minefield);
 
   while (!isGameOver(xPosition, yPosition, path)) {
-    const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition, yPosition);
-    console.log(playerIndex);
+    const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition,
+      yPosition);
+
     printMinefield(minefield, PLAYER, playerIndex);
 
     const direction = readDirection();
@@ -201,8 +227,19 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
       continue;
     }
 
+    const prevYPosition = yPosition;
+
     xPosition = getXPosition(direction, xPosition, mineLength + 1);
     yPosition = getYPosition(direction, yPosition, mineWidth + 1);
+
+    if (!isPlayerEnteredIntoMine && yPosition > 1) {
+      isPlayerEnteredIntoMine = true;
+    }
+
+    if (isPlayerEnteredIntoMine && yPosition === yInitial) {
+      yPosition = prevYPosition;
+      continue;
+    }
 
     if (yPosition !== yInitial) {
       stepNo++;
@@ -211,6 +248,7 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
 
     if (isBomb(xPosition, yPosition, stepNo, path)) {
       const bombIndex = getPlayerIndex(mineLength, mineWidth, xPosition, yPosition);
+
       printMinefield(minefield, BOMB, bombIndex);
       wait(900000000);
 
@@ -220,8 +258,14 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
       xPosition = xInitial;
       yPosition = yInitial;
       stepNo = 0;
+      isPlayerEnteredIntoMine = false;
     }
   }
+
+  console.clear();
+  console.log(getMinefieldWithPath(path, minefield, mineLength, mineWidth, "🟩", PLAYER));
+
+  console.log("Congratulations! You reached the destination!");
 }
 
 const mineLength = 5;
