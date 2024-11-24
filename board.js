@@ -1,3 +1,5 @@
+// const digits = "0123456789";
+
 function getReverse(string, index) {
   if (index === 0) {
     return string[index];
@@ -43,19 +45,34 @@ function isEven(number) {
   return isDivisible(number, 2);
 }
 
-for (let row = 9; row >= 0; row--) {
-  let line = "";
+// for (let row = 9; row >= 0; row--) {
+//   let line = "";
 
-  let lastDigit = isEven(row) ? 0 : 9;
-  const increment = isEven(row) ? 1 : -1;
+//   let lastDigit = isEven(row) ? 0 : 9;
+//   const increment = isEven(row) ? 1 : -1;
 
-  while (isNumberInRange(lastDigit, 0, 10)) {
-    const number = (row * 10) + lastDigit + 1;
+//   while (isNumberInRange(lastDigit, 0, 10)) {
+//     const number = (row * 10) + lastDigit + 1;
 
-    line += getNumberInString(number, 3, " ") + " ";
+//     line += getNumberInString(number, 3, " ") + " ";
 
-    lastDigit += increment;
+//     lastDigit += increment;
+//   }
+
+//   console.log(line);
+// }
+
+function board() {
+  for (let row = 10; row > 0; row--) {
+    let line = "";
+
+    for (let col = 0; col < 10; col++) {
+      const number = row * 10 - col;
+      line += getNumberInString(number, 3, " ");
+    }
+
+    console.log(line);
   }
-
-  console.log(line);
 }
+
+console.log(board());
