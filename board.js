@@ -1,5 +1,3 @@
-// const digits = "0123456789";
-
 function getReverse(string, index) {
   if (index === 0) {
     return string[index];
