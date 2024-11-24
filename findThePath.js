@@ -141,8 +141,8 @@ function isBomb(xPosition, yPosition, stepNo, path) {
     return false;
   }
 
-  const xIndex = stepNo * 3;
-  const yIndex = stepNo * 3 + 1;
+  const xIndex = (stepNo - 1) * 3;
+  const yIndex = xIndex + 1;
 
   return !(+path[xIndex] === xPosition && +path[yIndex] === yPosition);
 }
@@ -152,7 +152,7 @@ function getPlayerIndex(length, width, xPosition, yPosition) {
 }
 
 function printMinefield(minefield, symbol, index) {
-  // console.clear();
+  console.clear();
   console.log(put(minefield, symbol, index));
   printInstructions();
 }
@@ -187,7 +187,7 @@ function wait(delaySpeed) {
 }
 
 function printYouWon(path, minefield, mineLength, mineWidth, box, player) {
-  // console.clear();
+  console.clear();
   console.log(getMinefieldWithPath(path, minefield, mineLength, mineWidth, box, player));
 
   console.log("Congratulations! You reached the destination!");
@@ -295,7 +295,7 @@ function generatePath(mineLength, mineWidth, xInitial, yInitial) {
 
 const mineLength = 5;
 const mineWidth = 6;
-const xInitial = 1;
+const xInitial = getRandomNumber(1, mineLength);
 const yInitial = 1;
 const path = generatePath(mineLength, mineWidth, xInitial, yInitial + 1);
 
