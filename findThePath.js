@@ -136,22 +136,6 @@ function readDirection() {
   }
 }
 
-function getPath() {
-  const pathNo = Math.ceil(Math.random() * 3);
-
-  switch (pathNo) {
-    case 1:
-      return "11-12-22-23-24-34-44-45-55-56";
-    // return "55-45-44-34-33-32-22-21-11";
-    case 2:
-      return "11-12-22-32-33-34-44-54-55-56";
-    // return "55-54-53-43-33-32-31-21-11";
-    case 3:
-      return "11-12-13-14-24-34-44-43-42-52-53-54-55-56";
-    // return "55-54-53-52-51-41-42-43-33-23-13-12-11";
-  }
-}
-
 function isBomb(xPosition, yPosition, stepNo, path) {
   if (yPosition === 1) {
     return false;
@@ -168,7 +152,7 @@ function getPlayerIndex(length, width, xPosition, yPosition) {
 }
 
 function printMinefield(minefield, symbol, index) {
-  console.clear();
+  // console.clear();
   console.log(put(minefield, symbol, index));
   printInstructions();
 }
@@ -177,7 +161,7 @@ function getMinefieldWithPath(path, minefield, mineLength, mineWidth, box,
   player) {
 
   let minefieldWithPath = minefield;
-  let index = 3;
+  let index = 0;
 
   while (index < path.length - 3) {
     const xPos = +path[index];
@@ -203,7 +187,7 @@ function wait(delaySpeed) {
 }
 
 function printYouWon(path, minefield, mineLength, mineWidth, box, player) {
-  console.clear();
+  // console.clear();
   console.log(getMinefieldWithPath(path, minefield, mineLength, mineWidth, box, player));
 
   console.log("Congratulations! You reached the destination!");
@@ -222,10 +206,12 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
 
   const minefield = createMinefield(mineLength, mineWidth, BOX);
 
+  // console.log(minefield);
   while (!isGameOver(xPosition, yPosition, path)) {
     const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition,
       yPosition);
 
+    console.log(path);
     printMinefield(minefield, PLAYER, playerIndex);
 
     const direction = readDirection();
@@ -272,9 +258,46 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
   printYouWon(path, minefield, mineLength, mineWidth, "🟩", PLAYER);
 }
 
+
+function getRandomNumber(min, max) {
+  return min + Math.round(Math.random() * (max - min));
+}
+
+function generatePath(mineLength, mineWidth, xInitial, yInitial) {
+  let distance = xInitial + yInitial + 1;
+  let prevX = xInitial;
+  let prevY = yInitial;
+  let path = "" + xInitial + yInitial + "-";
+
+  while (distance <= mineLength + mineWidth) {
+    const xPosition = getRandomNumber(prevX, mineLength);
+    const yPosition = getRandomNumber(prevY, mineWidth);
+
+    if ((xPosition + yPosition) !== distance) {
+      continue;
+    }
+
+    path = path + xPosition + yPosition;
+
+    if (yPosition !== mineWidth) {
+      path += "-";
+    } else {
+      return path;
+    }
+
+    prevX = xPosition;
+    prevY = yPosition;
+    distance++;
+  }
+
+  return path;
+}
+
 const mineLength = 5;
 const mineWidth = 6;
 const xInitial = 1;
 const yInitial = 1;
+const path = generatePath(mineLength, mineWidth, xInitial, yInitial + 1);
 
-game(mineLength, mineWidth, getPath(), xInitial, yInitial);
+console.log(path);
+game(mineLength, mineWidth, path, xInitial, yInitial);
