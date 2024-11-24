@@ -17,10 +17,11 @@ function generatePath(mineLength, mineWidth, xInitial, yInitial) {
       continue;
     }
 
-    path = path + xPosition + yPosition + "-";
-    // console.log(path);
+    path = path + xPosition + yPosition;
 
-    if (yPosition === mineWidth) {
+    if (yPosition !== mineWidth) {
+      path += "-";
+    } else {
       return path;
     }
 
@@ -31,3 +32,10 @@ function generatePath(mineLength, mineWidth, xInitial, yInitial) {
 
   return path;
 }
+
+const mineLength = 10;
+const mineWidth = 10;
+const xInitial = 0;
+const yInitial = 0;
+
+console.log(generatePath(mineLength, mineWidth, xInitial, yInitial));
