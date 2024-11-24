@@ -28,11 +28,11 @@ function isNumberInRange(number, min, max) {
   return min <= number && number < max;
 }
 
-function getNumberInString(number, stringLength) {
+function getNumberInString(number, stringLength, char) {
   let stringNum = "" + number;
-  const noOfZerosNeeded = stringLength - stringNum.length;
+  const noOfCharsNeeded = stringLength - stringNum.length;
 
-  stringNum = repeat("0", noOfZerosNeeded) + stringNum;
+  stringNum = repeat(char, noOfCharsNeeded) + stringNum;
 
   return stringNum;
 }
@@ -45,20 +45,18 @@ function isEven(number) {
   return isDivisible(number, 2);
 }
 
-const digits = "0123456789";
-
 for (let row = 9; row >= 0; row--) {
   let line = "";
 
-  const lastDigit = isEven(row) ? 0 : 9;
+  let lastDigit = isEven(row) ? 0 : 9;
   const increment = isEven(row) ? 1 : -1;
 
-  for (let col = 9; col >= 0; col--) {
-    const onesDigit = isEven(row) ? reverse(digits)[col] : col;
+  while (isNumberInRange(lastDigit, 0, 10)) {
+    const number = (row * 10) + lastDigit + 1;
 
-    const number = row * 10 + +onesDigit + 1;
+    line += getNumberInString(number, 3, " ") + " ";
 
-    line += getNumberInString(number, 2) + " ";
+    lastDigit += increment;
   }
 
   console.log(line);
