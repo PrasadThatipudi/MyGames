@@ -67,7 +67,9 @@ function board() {
     let line = "";
 
     for (let col = 0; col < 10; col++) {
-      const number = row * 10 - col;
+      const column = !isEven(row) ? 9 - col : col;
+      const number = row * 10 - column;
+
       line += getNumberInString(number, 3, " ");
     }
 
