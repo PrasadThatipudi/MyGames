@@ -202,6 +202,13 @@ function wait(delaySpeed) {
   for (let index = 0; index < delaySpeed; index++) { }
 }
 
+function printYouWon(path, minefield, mineLength, mineWidth, box, player) {
+  console.clear();
+  console.log(getMinefieldWithPath(path, minefield, mineLength, mineWidth, box, player));
+
+  console.log("Congratulations! You reached the destination!");
+}
+
 function game(mineLength, mineWidth, path, xInitial, yInitial) {
   const BOX = "🟦";
   const PLAYER = "🧔";
@@ -262,10 +269,7 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
     }
   }
 
-  console.clear();
-  console.log(getMinefieldWithPath(path, minefield, mineLength, mineWidth, "🟩", PLAYER));
-
-  console.log("Congratulations! You reached the destination!");
+  printYouWon(path, minefield, mineLength, mineWidth, "🟩", PLAYER);
 }
 
 const mineLength = 5;
