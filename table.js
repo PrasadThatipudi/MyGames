@@ -95,33 +95,48 @@ function rightAlign(str, padLength) {
 }
 
 function getRow(rowData, headersCount, columnsLength) {
-  let row = "";
+  let row = "|";
 
   for (let index = 0; index < headersCount; index++) {
     const element = getNth(rowData, index, "_");
     const maxLength = getNth(columnsLength, index, "_");
 
-    row += centreAlign(element, maxLength);
+    row += centreAlign(element, maxLength) + "|";
   }
 
   return row + "\n";
 }
 
-function getHeaders(headers, columnsLength) {
-  const headersCount = countChar(headers, "_");
+function getBorder(headersCount, columnsLength) {
+  let boarder = "+";
 
-  return getRow(headers, headersCount, columnsLength);
+  for (let index = 0; index < headersCount; index++) {
+    const maxLength = getNth(columnsLength, index, "_");
+
+    boarder += repeat("-", maxLength) + "+";
+  }
+
+  return boarder + "\n";
 }
 
-function getTableBody(headers, data, columnsLength) {
+function getHeaders(headers, columnsLength) {
   const headersCount = countChar(headers, "_");
-  const itemsCount = countChar(data, ":");
+  const border = getBorder(headersCount, columnsLength);
+
+  return border + getRow(headers, headersCount, columnsLength) + border;
+}
+
+function getTableBody(headers, items, columnsLength) {
+  const headersCount = countChar(headers, "_");
+  const itemsCount = countChar(items, ":");
+  const border = getBorder(headersCount, columnsLength);
+
   let tableData = "";
 
   for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
-    const item = getNth(data, itemIndex, ":");
+    const item = getNth(items, itemIndex, ":");
 
-    tableData += getRow(item, headersCount, columnsLength);
+    tableData += getRow(item, headersCount, columnsLength) + border;
   }
 
   return tableData;
