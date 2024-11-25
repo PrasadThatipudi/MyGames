@@ -94,42 +94,46 @@ function rightAlign(str, padLength) {
   return leftPadding + str;
 }
 
-function displayHeaders(headers) {
-  let tableHeaders = "";
-  const headersCount = countChar(headers, "_");
+function getRow(rowData, headersCount, columnsLength) {
+  let row = "";
 
   for (let index = 0; index < headersCount; index++) {
-    const header = getNth(headers, index, "_");
+    const element = getNth(rowData, index, "_");
+    const maxLength = getNth(columnsLength, index, "_");
 
-    tableHeaders += rightAlign(header, 10);
+    row += centreAlign(element, maxLength);
   }
 
-  return tableHeaders;
+  return row + "\n";
 }
 
-function displayTableData(headers, data) {
+function getHeaders(headers, columnsLength) {
+  const headersCount = countChar(headers, "_");
+
+  return getRow(headers, headersCount, columnsLength);
+}
+
+function getTableBody(headers, data, columnsLength) {
   const headersCount = countChar(headers, "_");
   const itemsCount = countChar(data, ":");
   let tableData = "";
 
-  for (let index = 0; index < itemsCount; index++) {
-    const item = getNth(data, index, ":");
+  for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
+    const item = getNth(data, itemIndex, ":");
 
-    for (let eleIndex = 0; eleIndex < headersCount; eleIndex++) {
-      tableData += rightAlign(getNth(item, eleIndex, "_"), 10);
-    }
-
-    tableData += "\n";
+    tableData += getRow(item, headersCount, columnsLength);
   }
 
   return tableData;
 }
 
-function table(headers, data) {
-  return displayHeaders(headers) + "\n" + displayTableData(headers, data);
+function table(headers, data, columnsLength) {
+  return getHeaders(headers, columnsLength) +
+    getTableBody(headers, data, columnsLength);
 }
 
-const allHeaders = "Name_Age_";
-const allItems = "Prasad_18_:Bhagya_20_:Praneeth_33_:Sudheer_45_:";
+const columnsLength = "15_5_20_";
+const allHeaders = "Name_Age_Village_";
+const allItems = "Prasad_18_Vizag_:Praneeth_19_Vizianagaram_:";
 
-console.log(table(allHeaders, allItems));
+console.log(table(allHeaders, allItems, columnsLength));
