@@ -99,7 +99,9 @@ function displayHeaders(headers) {
   const headersCount = countChar(headers, "_");
 
   for (let index = 0; index < headersCount; index++) {
-    tableHeaders += rightAlign(getNth(headers, index, "_"), 10);
+    const header = getNth(headers, index, "_");
+
+    tableHeaders += rightAlign(header, 10);
   }
 
   return tableHeaders;
