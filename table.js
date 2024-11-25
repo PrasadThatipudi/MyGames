@@ -73,28 +73,61 @@ function repeat(str, noOfRepetitions) {
   return repeatedStr;
 }
 
-function leftAlign(str, length) {
-  return str + repeat(" ", length - str.length);
+function leftAlign(str, padLength) {
+  const rightPadding = repeat(" ", padLength - str.length);
+
+  return str + rightPadding;
 }
 
-function centreAlign(str, length) {
-  const noOfSpaces = length - str.length;
+function centreAlign(str, padLength) {
+  const noOfSpaces = padLength - str.length;
+  const leftPadding = repeat(" ", Math.floor(noOfSpaces / 2));
+  const rightPadding = repeat(" ", Math.ceil(noOfSpaces / 2));
 
-  return repeat(" ", noOfSpaces / 2) + str + repeat(" ", noOfSpaces / 2);
+  return leftPadding + str + rightPadding;
+
 }
 
-function rightAlign(str, length) {
-  return repeat(" ", length - str.length) + str;
+function rightAlign(str, padLength) {
+  const leftPadding = repeat(" ", padLength - str.length);
+
+  return leftPadding + str;
 }
 
 function displayHeaders(headers) {
-  let index = 0;
   let tableHeaders = "";
   const headersCount = countChar(headers, "_");
 
-  console.log(headersCount);
+  for (let index = 0; index < headersCount; index++) {
+    tableHeaders += rightAlign(getNth(headers, index, "_"), 10);
+  }
+
+  return tableHeaders;
+}
+
+function displayTableData(headers, data) {
+  const headersCount = countChar(headers, "_");
+  const itemsCount = countChar(data, ":");
+  let tableData = "";
+
+  for (let index = 0; index < itemsCount; index++) {
+    const item = getNth(data, index, ":");
+
+    for (let eleIndex = 0; eleIndex < headersCount; eleIndex++) {
+      tableData += rightAlign(getNth(item, eleIndex, "_"), 10);
+    }
+
+    tableData += "\n";
+  }
+
+  return tableData;
+}
+
+function table(headers, data) {
+  return displayHeaders(headers) + "\n" + displayTableData(headers, data);
 }
 
 const allHeaders = "Name_Age_";
-const allItems = "Prasad_18_:Bhagya_20_:";
+const allItems = "Prasad_18_:Bhagya_20_:Praneeth_33_:Sudheer_45_:";
 
+console.log(table(allHeaders, allItems));
