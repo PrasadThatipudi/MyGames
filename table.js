@@ -106,15 +106,6 @@ function getRow(rowData, headersCount, columnsLength) {
 
   return row + "\n";
 }
-/*
-┓
-┛
-┏
-┣
-┫
-┗
-━
-*/
 
 function remove(string, index) {
   const firstPart = slice(string, 0, index - 1);
@@ -141,44 +132,38 @@ function topBorder(headersCount, columnsLength) {
   return getBorder(headersCount, columnsLength, "┏", "┓", "━", "┳");
 }
 
-// function bottomBorder(headersCount, columnsLength) {
-//   return getBorder(headersCount, columnsLength, "┗", "┛")
-// }
+function bottomBorder(headersCount, columnsLength) {
+  return getBorder(headersCount, columnsLength, "┗", "┛", "━", "┻");
+}
 
-// function getBorder(headersCount, columnsLength) {
-//   let border = "+";
-
-//   for (let index = 0; index < headersCount; index++) {
-//     const maxLength = getNth(columnsLength, index, "_");
-
-//     border += repeat("-", maxLength) + "+";
-//   }
-
-//   return border + "\n";
-// }
+function middleBorder(headersCount, columnsLength) {
+  return getBorder(headersCount, columnsLength, "┣", "┫", "━", "╋")
+}
 
 function getHeaders(headers, columnsLength) {
   const headersCount = countChar(headers, "_");
+  const middle = middleBorder(headersCount, columnsLength);
   const top = topBorder(headersCount, columnsLength);
-  // const border = getBorder(headersCount, columnsLength);
 
-  return top + getRow(headers, headersCount, columnsLength);
+  return top + getRow(headers, headersCount, columnsLength) + middle;
 }
 
 function getTableBody(headers, items, columnsLength) {
   const headersCount = countChar(headers, "_");
   const itemsCount = countChar(items, ":");
-  // const border = getBorder(headersCount, columnsLength);
+  const bottom = bottomBorder(headersCount, columnsLength);
+  const middle = middleBorder(headersCount, columnsLength);
 
   let tableData = "";
 
   for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
     const item = getNth(items, itemIndex, ":");
 
+    // tableData += middle;
     tableData += getRow(item, headersCount, columnsLength);
   }
 
-  return tableData;
+  return tableData + bottom;
 }
 
 function table(headers, data, columnsLength) {
@@ -188,6 +173,19 @@ function table(headers, data, columnsLength) {
 
 const columnsLength = "15_5_20_";
 const allHeaders = "Name_Age_Village_";
-const allItems = "Prasad_18_Vizag_:Praneeth_19_Vizianagaram_:";
+const allItems = "Prasad_18_Vizag_:Praneeth_19_Vizianagaram_:Krishna_21_Trivandrum_:";
 
 console.log(table(allHeaders, allItems, columnsLength));
+
+
+/*
+┓
+┛
+┏
+┣
+┫
+┗
+━
+┻
+╋
+*/
