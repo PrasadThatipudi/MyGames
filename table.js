@@ -151,13 +151,13 @@ function middleBorder(cellCount, columnsLength) {
   return getBorder(cellCount, columnsLength, "┣", "┫", "━", "╋")
 }
 
-function getHeaders(headers, columnsLength) {
-  const cellsCount = countChar(headers, "_");
-  const middle = middleBorder(cellsCount, columnsLength);
-  const top = topBorder(cellsCount, columnsLength);
+// function getHeaders(headers, columnsLength) {
+//   const cellsCount = countChar(headers, "_");
+//   const middle = middleBorder(cellsCount, columnsLength);
+//   const top = topBorder(cellsCount, columnsLength);
 
-  return top + getRow(headers, cellsCount, columnsLength) + middle;
-}
+//   return top + getRow(headers, cellsCount, columnsLength) + middle;
+// }
 
 function getTableBody(headers, items, columnsLength) {
   const cellCount = countChar(headers, "_");
@@ -177,26 +177,35 @@ function getTableBody(headers, items, columnsLength) {
   return tableData + bottom;
 }
 
-function readHeaders(noOfHeaders) {
-  let headers = "";
+function readItem(cellCount) {
+  let item = "";
 
-  for (let count = 0; count < noOfHeaders; count++) {
-    const header = prompt("Enter header " + (count + 1) + ": ");
+  for (let cell = 1; cell <= cellCount; cell++) {
+    const element = prompt("Enter cell " + cell + " value: ");
 
-    headers += header + "_";
+    item += element + "_";
   }
 
-  return headers;
+  return item;
 }
 
+function readItems(columnsCount, rowsCount) {
+  let items = "";
+
+  for (let row = 1; row <= rowsCount; row++) {
+    console.log("Row " + row);
+
+    const item = readItem(columnsCount);
+    items += item + ":";
+  }
+
+  return items;
+}
 
 function table(rowsCount, columnsCount) {
-  const headers = readHeaders(columnsCount);
   const items = readItems(columnsCount, rowsCount);
 
-  // return headers;
-  // return getHeaders(headers, columnsLength) +
-  //   getTableBody(headers, data, columnsLength);
+  return items;
 }
 
 // Data set 1
