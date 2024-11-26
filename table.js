@@ -141,39 +141,54 @@ function getBorder(cellCount, columnsLength, left, right, middle, connect) {
 
 function topBorder(cellCount, columnsLength) {
   return getBorder(cellCount, columnsLength, "┏", "┓", "━", "┳");
+  // return getBorder(cellCount, columnsLength, "+", "+", "-", "+");
 }
 
 function bottomBorder(cellCount, columnsLength) {
   return getBorder(cellCount, columnsLength, "┗", "┛", "━", "┻");
+  // return getBorder(cellCount, columnsLength, "+", "+", "-", "+");
 }
 
 function middleBorder(cellCount, columnsLength) {
   return getBorder(cellCount, columnsLength, "┣", "┫", "━", "╋")
+  // return getBorder(cellCount, columnsLength, "+", "+", "-", "+");
 }
 
-function getTableBody(items, columnsCount, rowsCount) {
-  const columnsLength = "10_10_10";
+function getTableBody(items, columnsCount, rowsCount, columnsLength) {
   const top = topBorder(columnsCount, columnsLength);
+  // console.log(top);
   const middle = middleBorder(columnsCount, columnsLength);
+  // console.log(middle);
   const bottom = bottomBorder(columnsCount, columnsLength);
+  // console.log(bottom);
 
   let table = top;
 
   for (let itemIndex = 0; itemIndex < rowsCount; itemIndex++) {
     const item = getNthItem(items, itemIndex, ":");
 
-    table += getRow(item, columnsCount, "10_10_10_");
+    table += getRow(item, columnsCount, columnsLength);
     table += itemIndex === rowsCount - 1 ? bottom : middle;
   }
 
   return table;
 }
 
+function readInput(message, inputType) {
+  const input = prompt(message + ": ");
+
+  if (!input) {
+    return readInput(message);
+  }
+
+  return inputType === "number" ? +input : input;
+}
+
 function readItem(cellCount) {
   let item = "";
 
   for (let cell = 1; cell <= cellCount; cell++) {
-    const element = prompt("Enter cell " + cell + " value: ");
+    const element = readInput("Enter cell " + cell + " value");
 
     item += element + "_";
   }
@@ -194,22 +209,47 @@ function readItems(columnsCount, rowsCount) {
   return items;
 }
 
+function getColumnsLength(items, columnsCount, rowsCount) {
+  let columnsLength = "";
+
+  for (let column = 0; column < columnsCount; column++) {
+    let row = column;
+    let max = getNthItem(items, row, "_").length;
+
+    row += columnsCount;
+
+    while (row < columnsCount * rowsCount) {
+      const element = getNthItem(items, row, "_")
+
+      max = Math.max(max, element.length);
+      row += columnsCount;
+    }
+
+    columnsLength = columnsLength + max + "_";
+  }
+
+  return columnsLength;
+}
+
 function table(rowsCount, columnsCount) {
   const items = readItems(columnsCount, rowsCount);
+  const columnsLength = getColumnsLength(items, columnsCount, rowsCount);
 
-  return getTableBody(items, columnsCount, rowsCount);
+  // console.log(columnsLength);
+
+  return getTableBody(items, columnsCount, rowsCount, columnsLength);
   // return items;
 }
 
 // Data set 1
-const columnsLength = "15_5_20_";
+// const columnsLength = "15_5_20_";
 const allHeaders = "Name_Age_Village_";
 const allItems = "Prasad_18_Vizag_:Praneeth_19_Vizianagaram_:Krishna_21_Trivandrum_:";
 
 // console.log(table(allHeaders, allItems, columnsLength));
 
-const rowsCount = +prompt("Enter number of rows:");
-const columnsCount = +prompt("Enter number of columns:");
+const rowsCount = +readInput("Enter number of rows");
+const columnsCount = +readInput("Enter number of columns");
 
 console.log(table(rowsCount, columnsCount));
 
