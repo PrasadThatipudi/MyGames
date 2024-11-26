@@ -151,30 +151,22 @@ function middleBorder(cellCount, columnsLength) {
   return getBorder(cellCount, columnsLength, "┣", "┫", "━", "╋")
 }
 
-// function getHeaders(headers, columnsLength) {
-//   const cellsCount = countChar(headers, "_");
-//   const middle = middleBorder(cellsCount, columnsLength);
-//   const top = topBorder(cellsCount, columnsLength);
+function getTableBody(items, columnsCount, rowsCount) {
+  const columnsLength = "10_10_10";
+  const top = topBorder(columnsCount, columnsLength);
+  const middle = middleBorder(columnsCount, columnsLength);
+  const bottom = bottomBorder(columnsCount, columnsLength);
 
-//   return top + getRow(headers, cellsCount, columnsLength) + middle;
-// }
+  let table = top;
 
-function getTableBody(headers, items, columnsLength) {
-  const cellCount = countChar(headers, "_");
-  const itemsCount = countChar(items, ":");
-  const bottom = bottomBorder(cellCount, columnsLength);
-  // const middle = middleBorder(cellCount, columnsLength);
-
-  let tableData = "";
-
-  for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
+  for (let itemIndex = 0; itemIndex < rowsCount; itemIndex++) {
     const item = getNthItem(items, itemIndex, ":");
 
-    // tableData += middle;
-    tableData += getRow(item, cellCount, columnsLength);
+    table += getRow(item, columnsCount, "10_10_10_");
+    table += itemIndex === rowsCount - 1 ? bottom : middle;
   }
 
-  return tableData + bottom;
+  return table;
 }
 
 function readItem(cellCount) {
@@ -205,7 +197,8 @@ function readItems(columnsCount, rowsCount) {
 function table(rowsCount, columnsCount) {
   const items = readItems(columnsCount, rowsCount);
 
-  return items;
+  return getTableBody(items, columnsCount, rowsCount);
+  // return items;
 }
 
 // Data set 1
