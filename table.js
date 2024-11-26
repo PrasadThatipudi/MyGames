@@ -95,48 +95,87 @@ function rightAlign(str, padLength) {
 }
 
 function getRow(rowData, headersCount, columnsLength) {
-  let row = "|";
+  let row = "┃";
 
   for (let index = 0; index < headersCount; index++) {
     const element = getNth(rowData, index, "_");
     const maxLength = getNth(columnsLength, index, "_");
 
-    row += centreAlign(element, maxLength) + "|";
+    row += rightAlign(element, maxLength) + "┃";
   }
 
   return row + "\n";
 }
+/*
+┓
+┛
+┏
+┣
+┫
+┗
+━
+*/
 
-function getBorder(headersCount, columnsLength) {
-  let boarder = "+";
+function remove(string, index) {
+  const firstPart = slice(string, 0, index - 1);
+  const lastPart = slice(string, index + 1, string.length - 1);
+
+  return firstPart + lastPart;
+}
+
+function getBorder(headersCount, columnsLength, left, right, middle, connect) {
+  let border = left;
 
   for (let index = 0; index < headersCount; index++) {
     const maxLength = getNth(columnsLength, index, "_");
 
-    boarder += repeat("-", maxLength) + "+";
+    border += repeat(middle, maxLength) + connect;
   }
 
-  return boarder + "\n";
+  border = remove(border, border.length - 1) + right;
+
+  return border + "\n";
 }
+
+function topBorder(headersCount, columnsLength) {
+  return getBorder(headersCount, columnsLength, "┏", "┓", "━", "┳");
+}
+
+// function bottomBorder(headersCount, columnsLength) {
+//   return getBorder(headersCount, columnsLength, "┗", "┛")
+// }
+
+// function getBorder(headersCount, columnsLength) {
+//   let border = "+";
+
+//   for (let index = 0; index < headersCount; index++) {
+//     const maxLength = getNth(columnsLength, index, "_");
+
+//     border += repeat("-", maxLength) + "+";
+//   }
+
+//   return border + "\n";
+// }
 
 function getHeaders(headers, columnsLength) {
   const headersCount = countChar(headers, "_");
-  const border = getBorder(headersCount, columnsLength);
+  const top = topBorder(headersCount, columnsLength);
+  // const border = getBorder(headersCount, columnsLength);
 
-  return border + getRow(headers, headersCount, columnsLength) + border;
+  return top + getRow(headers, headersCount, columnsLength);
 }
 
 function getTableBody(headers, items, columnsLength) {
   const headersCount = countChar(headers, "_");
   const itemsCount = countChar(items, ":");
-  const border = getBorder(headersCount, columnsLength);
+  // const border = getBorder(headersCount, columnsLength);
 
   let tableData = "";
 
   for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
     const item = getNth(items, itemIndex, ":");
 
-    tableData += getRow(item, headersCount, columnsLength) + border;
+    tableData += getRow(item, headersCount, columnsLength);
   }
 
   return tableData;
