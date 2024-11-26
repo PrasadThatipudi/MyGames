@@ -18,24 +18,24 @@ function slice(str, start, end) {
   return sliceOfStr;
 }
 
-function getNth(allItems, n, separator) {
+function getNthItem(allItems, n, separator) {
   let index = 0;
-  let count = 0;
 
-  while (count < n) {
+  for (let count = 0; count < n; count++) {
     index = findIndex(allItems, separator, index) + 1;
-    count++;
   }
 
-  return slice(allItems, index, findIndex(allItems, separator, index + 1) - 1);
+  const endIndex = findIndex(allItems, separator, index + 1) - 1;
+
+  return slice(allItems, index, endIndex);
 }
 
 function age(intern) {
-  return getNth(intern, 1, "_");
+  return getNthItem(intern, 1, "_");
 }
 
 function name(intern) {
-  return getNth(intern, 0, "_");
+  return getNthItem(intern, 0, "_");
 }
 
 function countChar(str, char) {
@@ -54,13 +54,13 @@ function countChar(str, char) {
 function header(n) {
   const allHeaders = "Name_Age_";
 
-  return getNth(allHeaders, n, ":");
+  return getNthItem(allHeaders, n, ":");
 }
 
 function interns(n) {
   const allItems = "Prasad_18_:Bhagya_20_:";
 
-  return getNth(allItems, n, ":");
+  return getNthItem(allItems, n, ":");
 }
 
 function repeat(str, noOfRepetitions) {
@@ -94,98 +94,130 @@ function rightAlign(str, padLength) {
   return leftPadding + str;
 }
 
-function getRow(rowData, headersCount, columnsLength) {
+function getRow(rowData, cellCount, columnsLength) {
   let row = "┃";
 
-  for (let index = 0; index < headersCount; index++) {
-    const element = getNth(rowData, index, "_");
-    const maxLength = getNth(columnsLength, index, "_");
+  for (let index = 0; index < cellCount; index++) {
+    const element = getNthItem(rowData, index, "_");
+    const length = getNthItem(columnsLength, index, "_");
 
-    row += rightAlign(element, maxLength) + "┃";
+    row += centreAlign(element, length) + "┃";
   }
 
   return row + "\n";
 }
 
-function remove(string, index) {
-  const firstPart = slice(string, 0, index - 1);
-  const lastPart = slice(string, index + 1, string.length - 1);
-
-  return firstPart + lastPart;
+function isNumberInRange(number, min, max) {
+  return min <= number && number <= max;
 }
 
-function getBorder(headersCount, columnsLength, left, right, middle, connect) {
-  let border = left;
-
-  for (let index = 0; index < headersCount; index++) {
-    const maxLength = getNth(columnsLength, index, "_");
-
-    border += repeat(middle, maxLength) + connect;
+function replace(text, index, replacement) {
+  if (!isNumberInRange(index, 0, text.length - 1)) {
+    return text;
   }
 
-  border = remove(border, border.length - 1) + right;
+  const firstPart = slice(text, 0, index - 1);
+  const lastPart = slice(text, index + 1, text.length - 1);
+
+  return firstPart + replacement + lastPart;
+}
+
+function getBorder(cellCount, columnsLength, left, right, middle, connect) {
+  let border = left;
+
+  for (let index = 0; index < cellCount; index++) {
+    const length = getNthItem(columnsLength, index, "_");
+
+    border += repeat(middle, length) + connect;
+  }
+
+  border = replace(border, border.length - 1, right);
 
   return border + "\n";
 }
 
-function topBorder(headersCount, columnsLength) {
-  return getBorder(headersCount, columnsLength, "┏", "┓", "━", "┳");
+
+// ┏ ┳ ┓ ┣ ━ ┫ ┗ ┻ ┛ ╋
+
+function topBorder(cellCount, columnsLength) {
+  return getBorder(cellCount, columnsLength, "┏", "┓", "━", "┳");
 }
 
-function bottomBorder(headersCount, columnsLength) {
-  return getBorder(headersCount, columnsLength, "┗", "┛", "━", "┻");
+function bottomBorder(cellCount, columnsLength) {
+  return getBorder(cellCount, columnsLength, "┗", "┛", "━", "┻");
 }
 
-function middleBorder(headersCount, columnsLength) {
-  return getBorder(headersCount, columnsLength, "┣", "┫", "━", "╋")
+function middleBorder(cellCount, columnsLength) {
+  return getBorder(cellCount, columnsLength, "┣", "┫", "━", "╋")
 }
 
 function getHeaders(headers, columnsLength) {
-  const headersCount = countChar(headers, "_");
-  const middle = middleBorder(headersCount, columnsLength);
-  const top = topBorder(headersCount, columnsLength);
+  const cellsCount = countChar(headers, "_");
+  const middle = middleBorder(cellsCount, columnsLength);
+  const top = topBorder(cellsCount, columnsLength);
 
-  return top + getRow(headers, headersCount, columnsLength) + middle;
+  return top + getRow(headers, cellsCount, columnsLength) + middle;
 }
 
 function getTableBody(headers, items, columnsLength) {
-  const headersCount = countChar(headers, "_");
+  const cellCount = countChar(headers, "_");
   const itemsCount = countChar(items, ":");
-  const bottom = bottomBorder(headersCount, columnsLength);
-  const middle = middleBorder(headersCount, columnsLength);
+  const bottom = bottomBorder(cellCount, columnsLength);
+  // const middle = middleBorder(cellCount, columnsLength);
 
   let tableData = "";
 
   for (let itemIndex = 0; itemIndex < itemsCount; itemIndex++) {
-    const item = getNth(items, itemIndex, ":");
+    const item = getNthItem(items, itemIndex, ":");
 
     // tableData += middle;
-    tableData += getRow(item, headersCount, columnsLength);
+    tableData += getRow(item, cellCount, columnsLength);
   }
 
   return tableData + bottom;
 }
 
-function table(headers, data, columnsLength) {
-  return getHeaders(headers, columnsLength) +
-    getTableBody(headers, data, columnsLength);
+function readHeaders(noOfHeaders) {
+  let headers = "";
+
+  for (let count = 0; count < noOfHeaders; count++) {
+    const header = prompt("Enter header " + (count + 1) + ": ");
+
+    headers += header + "_";
+  }
+
+  return headers;
 }
 
+
+function table(rowsCount, columnsCount) {
+  const headers = readHeaders(columnsCount);
+  const items = readItems(columnsCount, rowsCount);
+
+  // return headers;
+  // return getHeaders(headers, columnsLength) +
+  //   getTableBody(headers, data, columnsLength);
+}
+
+// Data set 1
 const columnsLength = "15_5_20_";
 const allHeaders = "Name_Age_Village_";
 const allItems = "Prasad_18_Vizag_:Praneeth_19_Vizianagaram_:Krishna_21_Trivandrum_:";
 
-console.log(table(allHeaders, allItems, columnsLength));
+// console.log(table(allHeaders, allItems, columnsLength));
 
+const rowsCount = +prompt("Enter number of rows:");
+const columnsCount = +prompt("Enter number of columns:");
 
-/*
-┓
-┛
-┏
-┣
-┫
-┗
-━
-┻
-╋
-*/
+console.log(table(rowsCount, columnsCount));
+
+// console.log(rowsCount, columnsCount);
+
+// Table
+// Rows, Columns
+// 1st row - headers
+// rest - body
+// Headers - header count - no of columns
+// Items 
+// separators
+// Cell Alignment
