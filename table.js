@@ -1,6 +1,14 @@
-function findIndex(items, char, start) {
-  for (let index = start; index < items.length; index++) {
-    if (items[index] === char) {
+function age(intern) {
+  return getNthItem(intern, 1, "_");
+}
+
+function name(intern) {
+  return getNthItem(intern, 0, "_");
+}
+
+function findIndex(text, char, start) {
+  for (let index = start; index < text.length; index++) {
+    if (text[index] === char) {
       return index;
     }
   }
@@ -10,32 +18,26 @@ function findIndex(items, char, start) {
 
 function slice(str, start, end) {
   let sliceOfStr = "";
+  const startIndex = Math.max(0, start);
+  const endIndex = Math.min(end, str.length - 1);
 
-  for (let index = Math.max(0, start); index <= Math.min(end, str.length - 1); index++) {
+  for (let index = startIndex; index <= endIndex; index++) {
     sliceOfStr += str[index];
   }
 
   return sliceOfStr;
 }
 
-function getNthItem(allItems, n, separator) {
-  let index = 0;
+function getNthItem(items, n, separator) {
+  let start = 0;
 
   for (let count = 0; count < n; count++) {
-    index = findIndex(allItems, separator, index) + 1;
+    start = findIndex(items, separator, start) + 1;
   }
 
-  const endIndex = findIndex(allItems, separator, index + 1) - 1;
+  const end = findIndex(items, separator, start + 1) - 1;
 
-  return slice(allItems, index, endIndex);
-}
-
-function age(intern) {
-  return getNthItem(intern, 1, "_");
-}
-
-function name(intern) {
-  return getNthItem(intern, 0, "_");
+  return slice(items, start, end);
 }
 
 function countChar(str, char) {
@@ -101,7 +103,7 @@ function getRow(rowData, cellCount, columnsLength) {
     const element = getNthItem(rowData, index, "_");
     const length = getNthItem(columnsLength, index, "_");
 
-    row += centreAlign(element, length) + "┃";
+    row += leftAlign(element, length) + "┃";
   }
 
   return row + "\n";
