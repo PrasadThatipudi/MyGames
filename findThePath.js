@@ -192,7 +192,7 @@ function game(mineLength, mineWidth, path, xInitial, yInitial) {
 
   while (!isGameOver(xPosition, yPosition, path)) {
     const playerIndex = getPlayerIndex(mineLength, mineWidth, xPosition, yPosition);
-    console.log(playerIndex);
+    // console.log(playerIndex);
     printMinefield(minefield, PLAYER, playerIndex);
 
     const direction = readDirection();
