@@ -1,12 +1,8 @@
 const randomInt = (from, to) => from + Math.floor(Math.random() * to);
 const rollTheDice = () => randomInt(0, 6);
 
-const getNumberSymbol = function (number) {
-  const numberSymbols = "0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣";
-  const start = number * 3;
-
-  return numberSymbols.slice(start, start + 2);
-};
+const getNumberSymbol = (number) =>
+  ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"][number];
 
 function getNumberInString(number, stringLength) {
   let stringNum = "" + number;
