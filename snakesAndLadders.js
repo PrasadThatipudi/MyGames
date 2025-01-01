@@ -29,7 +29,7 @@ function isPlayerWon(score) {
 }
 
 function printPlayerPosition(playerNo, score) {
-  console.log("Player " + playerNo + " score is: " + score);
+  console.log(`Player ${playerNo} score is: ${score}`);
 }
 
 const snakesAndLadders = {
@@ -73,26 +73,29 @@ const getPlayerPosition = function (scoreBoard, playerNo) {
   return curPosition;
 };
 
-function playGameWith(noOfPlayers) {
-  const scoreBoard = Array.from({ length: noOfPlayers }, () => 0);
-  let playerNo = 0;
+const startGame = function (scoreBoard, noOfPlayers) {
+  let currentPlayer = 0;
 
-  console.log(scoreBoard);
-
-  while (playerNo < scoreBoard.length) {
-    if (playerNo === 0) {
+  while (true) {
+    if (currentPlayer === 0) {
       console.log("-".repeat(40));
     }
 
-    const curPosition = getPlayerPosition(scoreBoard, playerNo);
+    const curPosition = getPlayerPosition(scoreBoard, currentPlayer);
+    if (isPlayerWon(curPosition)) return currentPlayer;
 
-    if (isPlayerWon(curPosition)) {
-      return console.log(`Congratulations Player ${playerNo} won the game`);
-    }
-
-    scoreBoard[playerNo] = curPosition;
-    playerNo = (playerNo + 1) % noOfPlayers;
+    scoreBoard[currentPlayer] = curPosition;
+    currentPlayer = (currentPlayer + 1) % noOfPlayers;
   }
+};
+
+const displayWinningMsg = (winner) =>
+  console.log(`Congratulations Player ${winner} won the game`);
+
+function playGameWith(noOfPlayers) {
+  const scoreBoard = Array.from({ length: noOfPlayers }, () => 0);
+  const winner = startGame(scoreBoard, noOfPlayers);
+  displayWinningMsg(winner);
 }
 
 function main() {
