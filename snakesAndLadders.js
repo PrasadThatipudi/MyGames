@@ -1,3 +1,4 @@
+// deno-lint-ignore-file prefer-const
 const randomInt = (from, to) =>
   from + Math.floor(Math.random() * Math.abs(to - from));
 
@@ -32,7 +33,7 @@ function printPlayerPosition(playerNo, score) {
   console.log("Player " + playerNo + " score is: " + score);
 }
 
-const snkeAndLadderPositions = {
+const snakesAndLadders = {
   4: 56,
   29: 31,
   14: 55,
@@ -47,39 +48,48 @@ const snkeAndLadderPositions = {
   96: 42,
 };
 
-function getScore(playerNo, playerPosition) {
-  const dice = getDiceValue(playerNo);
+function getScore(playerPosition, dice) {
   playerPosition += isScoreExeeded(playerPosition + dice) ? 0 : dice;
 
-  return playerPosition in snkeAndLadderPositions
-    ? snkeAndLadderPositions[playerPosition]
+  return playerPosition in snakesAndLadders
+    ? snakesAndLadders[playerPosition]
     : playerPosition;
 }
 
+const displayIfSnakeOrLadder = (dice, prevPosition, curPosition) => {
+  if (prevPosition + dice < curPosition) {
+    console.log("Congrats! You got a 🪜");
+  }
+  if (prevPosition + dice > curPosition) {
+    console.log("Congrats1 You caught by 🐍");
+  }
+};
+
 function playGameWith(noOfPlayers) {
   const scoreBoard = Array.from({ length: noOfPlayers }, () => 0);
-  let index = 0;
+  let playerNo = 0;
 
   console.log(scoreBoard);
 
-  while (index < scoreBoard.length) {
-    if (index === 0) {
+  while (playerNo < scoreBoard.length) {
+    if (playerNo === 0) {
       console.log("-".repeat(40));
     }
 
-    const playerNo = index + 1;
-    const prevPosition = scoreBoard[index];
-    let curPosition = getScore(playerNo, prevPosition);
+    const prevPosition = scoreBoard[playerNo];
+    const dice = getDiceValue(playerNo);
+    const curPosition = getScore(prevPosition, dice);
+    displayIfSnakeOrLadder(dice, prevPosition, curPosition);
     printPlayerPosition(playerNo, curPosition);
 
     if (isPlayerWon(curPosition)) {
       return "Congratulations Player " + playerNo + " won the game";
     }
 
-    scoreBoard[index] = curPosition;
+    scoreBoard[playerNo] = curPosition;
 
-    index = (index + 1) % scoreBoard.length;
-    console.log(index, scoreBoard.length);
+    playerNo = (playerNo + 1) % noOfPlayers;
+    console.log(playerNo, scoreBoard.length);
   }
 }
 
