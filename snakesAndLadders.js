@@ -7,27 +7,8 @@ export const getNumberSymbol = (number) =>
 export const padWithZero = (number, padLength) =>
   number.toString().padStart(padLength, "0");
 
-function _updateString(string, updateWith, from, index, charIndex) {
-  if (index === string.length) {
-    return "";
-  }
-
-  if (index === from && charIndex !== updateWith.length) {
-    return (
-      updateWith[charIndex] +
-      _updateString(string, updateWith, from + 1, index + 1, charIndex + 1)
-    );
-  }
-
-  return (
-    string[index] +
-    _updateString(string, updateWith, from, index + 1, charIndex)
-  );
-}
-
-function updateString(string, updateWith, from) {
-  return _updateString(string, updateWith, from, 0, 0);
-}
+export const put = (string, replaceWith, from) =>
+  string.slice(0, from) + replaceWith + string.slice(replaceWith.length + from);
 
 function isStringPresentAt(string, otherString, stringStart) {
   for (let index = 0; index < otherString.length; index++) {
@@ -108,7 +89,7 @@ function getScore(playerNo, playerPosition) {
   const ladderIndex = getLadderIndex(playerPosition);
 
   if (ladderIndex !== -1) {
-    playerPosition = LADDERS_TOP.slice(ladderIndex, ladderIndex + 2);
+    playerPosition = +LADDERS_TOP.slice(ladderIndex, ladderIndex + 2);
 
     printPlayerPosition(playerNo, playerPosition);
     console.log("\nYou got a 🪜");
@@ -133,26 +114,28 @@ function getScore(playerNo, playerPosition) {
 }
 
 function playGameWith(noOfPlayers) {
-  let scoreBoard = "000".repeat(noOfPlayers);
+  const scoreBoard = Array.from({ length: noOfPlayers }, () => 0);
   let index = 0;
+
+  console.log(scoreBoard);
 
   while (index < scoreBoard.length) {
     if (index === 0) {
       console.log("-".repeat(40));
     }
 
-    const playerNo = index / 3 + 1;
-    const prevPosition = +scoreBoard.slice(index, index + 2);
-    let curPosition = padWithZero(getScore(playerNo, prevPosition), 3);
+    const playerNo = index + 1;
+    const prevPosition = scoreBoard[index];
+    let curPosition = getScore(playerNo, prevPosition);
 
     if (isPlayerWon(+curPosition)) {
       return "Congratulations Player " + playerNo + " won the game";
     }
 
-    scoreBoard = updateString(scoreBoard, curPosition, index);
+    scoreBoard[index] = curPosition;
 
-    index = (index + 3) % scoreBoard.length;
-    console.log();
+    index = (index + 1) % scoreBoard.length;
+    console.log(index, scoreBoard.length);
   }
 }
 
@@ -169,4 +152,4 @@ function main() {
   return "Bye👋";
 }
 
-// console.log(main());
+console.log(main());
