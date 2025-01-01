@@ -1,3 +1,25 @@
+import { displayTable } from "../practice/table/tableWithArrays.js";
+
+const isNegative = (number) => number < 0;
+
+const range = function (from, to, step) {
+  if (step === 0 || isNegative(to - from) !== isNegative(step)) return [];
+
+  const noOfTerms = Math.ceil(Math.abs((to - from) / step));
+  return Array.from({ length: noOfTerms }, (_, index) => from + index * step);
+};
+
+const isOdd = (number) => (number & 1) === 1;
+const reverseArray = (array) => [...array].reverse();
+
+const generateBoard = () =>
+  Array.from({ length: 10 }, (_, index) => index)
+    .reverse()
+    .map((index) => range(index * 10 + 1, index * 10 + 11, 1))
+    .map((array, index) => (isOdd(index) ? array : reverseArray(array)));
+
+displayTable(generateBoard());
+
 const randomInt = (from, to) =>
   from + Math.floor(Math.random() * Math.abs(to - from));
 
@@ -109,4 +131,4 @@ function main() {
   return "Bye👋";
 }
 
-main();
+// main();
