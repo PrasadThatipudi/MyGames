@@ -69,40 +69,21 @@ function printPlayerPosition(playerNo, score) {
 }
 
 const ladders = { 4: 56, 29: 31, 14: 55, 22: 58, 41: 79, 54: 88 };
-// const LADDERS_START = "004-029-014-022-041-054";
-// const LADDERS_TOP = "056-031-055-058-079-088";
-
-function getLadderIndex(playerPosition) {
-  return subStringIndexAt(LADDERS_START, padWithZero(playerPosition, 3));
-}
-
 const snakes = { 28: 10, 37: 3, 48: 16, 75: 32, 94: 71, 96: 42 };
-// const SNAKES_MOUTH = "028-037-048-075-094-096";
-// const SNAKES_TALE = "010-003-016-032-071-042";
-
-function getSnakeIndex(playerPosition) {
-  return subStringIndexAt(SNAKES_MOUTH, padWithZero(playerPosition, 3));
-}
 
 function getScore(playerNo, playerPosition) {
   const dice = getDiceValue(playerNo);
   playerPosition += isScoreExeeded(playerPosition + dice) ? 0 : dice;
 
   if (playerPosition in ladders) {
-    playerPosition = ladders[playerPosition];
-    printPlayerPosition(playerNo, playerPosition);
     console.log("\nYou got a 🪜");
-    return playerPosition;
+    return ladders[playerPosition];
   }
 
   if (playerPosition in snakes) {
-    playerPosition = snakes[playerPosition];
-    printPlayerPosition(playerNo, playerPosition);
     console.log("\nCongrats! You caught by 🐍");
-    return playerPosition;
+    return snakes[playerPosition];
   }
-
-  printPlayerPosition(playerNo, playerPosition);
 
   return playerPosition;
 }
@@ -121,6 +102,7 @@ function playGameWith(noOfPlayers) {
     const playerNo = index + 1;
     const prevPosition = scoreBoard[index];
     let curPosition = getScore(playerNo, prevPosition);
+    printPlayerPosition(playerNo, curPosition);
 
     if (isPlayerWon(curPosition)) {
       return "Congratulations Player " + playerNo + " won the game";
