@@ -1,4 +1,3 @@
-// deno-lint-ignore-file prefer-const
 const randomInt = (from, to) =>
   from + Math.floor(Math.random() * Math.abs(to - from));
 
@@ -8,11 +7,11 @@ export const getNumberSymbol = (number) =>
   ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"][number];
 
 function printDiceValue(playerNo, diceValue) {
-  console.log("Player " + playerNo + " got " + getNumberSymbol(diceValue));
+  console.log(`Player ${playerNo} got ${getNumberSymbol(diceValue)}`);
 }
 
 function getDiceValue(playerNo) {
-  if (prompt("roll the dice-player " + playerNo + ": ", "press enter")) {
+  if (prompt(`roll the dice-player ${playerNo}: `, "press enter")) {
     const dice = rollTheDice();
     printDiceValue(playerNo, dice);
     return dice;
@@ -58,11 +57,20 @@ function getScore(playerPosition, dice) {
 
 const displayIfSnakeOrLadder = (dice, prevPosition, curPosition) => {
   if (prevPosition + dice < curPosition) {
-    console.log("Congrats! You got a 🪜");
+    return console.log("Congrats! You got a 🪜");
   }
   if (prevPosition + dice > curPosition) {
-    console.log("Congrats1 You caught by 🐍");
+    console.log("Congrats! You caught by 🐍");
   }
+};
+
+const getPlayerPosition = function (scoreBoard, playerNo) {
+  const prevPosition = scoreBoard[playerNo];
+  const dice = getDiceValue(playerNo);
+  const curPosition = getScore(prevPosition, dice);
+  displayIfSnakeOrLadder(dice, prevPosition, curPosition);
+  printPlayerPosition(playerNo, curPosition);
+  return curPosition;
 };
 
 function playGameWith(noOfPlayers) {
@@ -76,20 +84,14 @@ function playGameWith(noOfPlayers) {
       console.log("-".repeat(40));
     }
 
-    const prevPosition = scoreBoard[playerNo];
-    const dice = getDiceValue(playerNo);
-    const curPosition = getScore(prevPosition, dice);
-    displayIfSnakeOrLadder(dice, prevPosition, curPosition);
-    printPlayerPosition(playerNo, curPosition);
+    const curPosition = getPlayerPosition(scoreBoard, playerNo);
 
     if (isPlayerWon(curPosition)) {
-      return "Congratulations Player " + playerNo + " won the game";
+      return console.log(`Congratulations Player ${playerNo} won the game`);
     }
 
     scoreBoard[playerNo] = curPosition;
-
     playerNo = (playerNo + 1) % noOfPlayers;
-    console.log(playerNo, scoreBoard.length);
   }
 }
 
@@ -104,4 +106,4 @@ function main() {
   return "Bye👋";
 }
 
-console.log(main());
+main();
