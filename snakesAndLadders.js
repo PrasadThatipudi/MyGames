@@ -73,13 +73,13 @@ const getPlayerPosition = function (scoreBoard, playerNo) {
   return curPosition;
 };
 
+const displayDividor = () => console.log("-".repeat(40));
+
 const startGame = function (scoreBoard, noOfPlayers) {
   let currentPlayer = 0;
 
   while (true) {
-    if (currentPlayer === 0) {
-      console.log("-".repeat(40));
-    }
+    if (currentPlayer === 0) displayDividor();
 
     const curPosition = getPlayerPosition(scoreBoard, currentPlayer);
     if (isPlayerWon(curPosition)) return currentPlayer;
