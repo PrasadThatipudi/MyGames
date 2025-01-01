@@ -1,5 +1,5 @@
 const randomInt = (from, to) => from + Math.floor(Math.random() * to);
-const rollTheDice = () => randomInt(0, 6);
+const rollTheDice = () => randomInt(1, 7);
 
 export const getNumberSymbol = (number) =>
   ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"][number];
@@ -68,15 +68,17 @@ function printPlayerPosition(playerNo, score) {
   console.log("Player " + playerNo + " score is: " + score);
 }
 
-const LADDERS_START = "004-029-014-022-041-054";
-const LADDERS_TOP = "056-031-055-058-079-088";
+const ladders = { 4: 56, 29: 31, 14: 55, 22: 58, 41: 79, 54: 88 };
+// const LADDERS_START = "004-029-014-022-041-054";
+// const LADDERS_TOP = "056-031-055-058-079-088";
 
 function getLadderIndex(playerPosition) {
   return subStringIndexAt(LADDERS_START, padWithZero(playerPosition, 3));
 }
 
-const SNAKES_MOUTH = "028-037-048-075-094-096";
-const SNAKES_TALE = "010-003-016-032-071-042";
+const snakes = { 28: 10, 37: 3, 48: 16, 75: 32, 94: 71, 96: 42 };
+// const SNAKES_MOUTH = "028-037-048-075-094-096";
+// const SNAKES_TALE = "010-003-016-032-071-042";
 
 function getSnakeIndex(playerPosition) {
   return subStringIndexAt(SNAKES_MOUTH, padWithZero(playerPosition, 3));
@@ -86,25 +88,17 @@ function getScore(playerNo, playerPosition) {
   const dice = getDiceValue(playerNo);
   playerPosition += isScoreExeeded(playerPosition + dice) ? 0 : dice;
 
-  const ladderIndex = getLadderIndex(playerPosition);
-
-  if (ladderIndex !== -1) {
-    playerPosition = +LADDERS_TOP.slice(ladderIndex, ladderIndex + 2);
-
+  if (playerPosition in ladders) {
+    playerPosition = ladders[playerPosition];
     printPlayerPosition(playerNo, playerPosition);
     console.log("\nYou got a 🪜");
-
     return playerPosition;
   }
 
-  const snakeIndex = getSnakeIndex(playerPosition);
-
-  if (snakeIndex !== -1) {
-    playerPosition = +slice(SNAKES_TALE, snakeIndex, snakeIndex + 2);
-
+  if (playerPosition in snakes) {
+    playerPosition = snakes[playerPosition];
     printPlayerPosition(playerNo, playerPosition);
     console.log("\nCongrats! You caught by 🐍");
-
     return playerPosition;
   }
 
@@ -128,7 +122,7 @@ function playGameWith(noOfPlayers) {
     const prevPosition = scoreBoard[index];
     let curPosition = getScore(playerNo, prevPosition);
 
-    if (isPlayerWon(+curPosition)) {
+    if (isPlayerWon(curPosition)) {
       return "Congratulations Player " + playerNo + " won the game";
     }
 
@@ -142,9 +136,7 @@ function playGameWith(noOfPlayers) {
 function main() {
   console.log("Welcome!");
 
-  const isUserInGoodMood = confirm("Do you want to play this game?");
-
-  if (isUserInGoodMood) {
+  if (confirm("Do you want to play this game?")) {
     const noOfPlayers = prompt("Enter number of players: ");
     return playGameWith(noOfPlayers);
   }
