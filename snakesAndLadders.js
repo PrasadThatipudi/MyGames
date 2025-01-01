@@ -1,13 +1,12 @@
-function rollTheDice() {
-  return Math.ceil(Math.random() * 6);
-}
+const randomInt = (from, to) => from + Math.floor(Math.random() * to);
+const rollTheDice = () => randomInt(0, 6);
 
-function getNumberSymbol(number) {
+const getNumberSymbol = function (number) {
   const numberSymbols = "0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣";
   const start = number * 3;
 
   return numberSymbols.slice(start, start + 2);
-}
+};
 
 function getNumberInString(number, stringLength) {
   let stringNum = "" + number;
