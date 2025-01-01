@@ -1,17 +1,11 @@
 const randomInt = (from, to) => from + Math.floor(Math.random() * to);
 const rollTheDice = () => randomInt(0, 6);
 
-const getNumberSymbol = (number) =>
+export const getNumberSymbol = (number) =>
   ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"][number];
 
-function getNumberInString(number, stringLength) {
-  let stringNum = "" + number;
-  const noOfZerosNeeded = stringLength - stringNum.length;
-
-  stringNum = "0".repeat(noOfZerosNeeded) + stringNum;
-
-  return stringNum;
-}
+export const padWithZero = (number, padLength) =>
+  number.toString().padStart(padLength, "0");
 
 function _updateString(string, updateWith, from, index, charIndex) {
   if (index === string.length) {
@@ -97,14 +91,14 @@ const LADDERS_START = "004-029-014-022-041-054";
 const LADDERS_TOP = "056-031-055-058-079-088";
 
 function getLadderIndex(playerPosition) {
-  return subStringIndexAt(LADDERS_START, getNumberInString(playerPosition, 3));
+  return subStringIndexAt(LADDERS_START, padWithZero(playerPosition, 3));
 }
 
 const SNAKES_MOUTH = "028-037-048-075-094-096";
 const SNAKES_TALE = "010-003-016-032-071-042";
 
 function getSnakeIndex(playerPosition) {
-  return subStringIndexAt(SNAKES_MOUTH, getNumberInString(playerPosition, 3));
+  return subStringIndexAt(SNAKES_MOUTH, padWithZero(playerPosition, 3));
 }
 
 function getScore(playerNo, playerPosition) {
@@ -149,7 +143,7 @@ function playGameWith(noOfPlayers) {
 
     const playerNo = index / 3 + 1;
     const prevPosition = +scoreBoard.slice(index, index + 2);
-    let curPosition = getNumberInString(getScore(playerNo, prevPosition), 3);
+    let curPosition = padWithZero(getScore(playerNo, prevPosition), 3);
 
     if (isPlayerWon(+curPosition)) {
       return "Congratulations Player " + playerNo + " won the game";
@@ -175,4 +169,4 @@ function main() {
   return "Bye👋";
 }
 
-console.log(main());
+// console.log(main());
